@@ -1,4 +1,6 @@
 # database connection
 firebase-admin
+
 # embedding
-sentence-transformers
+transformers
+torch
