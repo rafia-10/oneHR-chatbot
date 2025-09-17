@@ -4,3 +4,6 @@ firebase-admin
 # embedding
 transformers
 torch
+
+# vector database 
+qdrant-client
