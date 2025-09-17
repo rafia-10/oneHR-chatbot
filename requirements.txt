@@ -1,6 +1,22 @@
 # database connection
 firebase-admin
 
-# embedding
+# embeddings
 transformers
-torch 
+torch
+
+# utils
+numpy
+json5
+
+# RAG helpers
+faiss-cpu
+langchain
+chromadb
+
+# env management
+python-dotenv
+
+# LLM (Groq)
+groq
+python-dotenv
