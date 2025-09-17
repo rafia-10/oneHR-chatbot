@@ -12,6 +12,9 @@ json5
 # RAG helpers
 faiss-cpu
 langchain
+
+# vector database manager
+qdrant-client
 chromadb
 
 # env management
