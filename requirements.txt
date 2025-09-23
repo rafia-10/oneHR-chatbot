@@ -1,9 +1,34 @@
 # database connection
 firebase-admin
 
+HEAD
 # embedding
 transformers
 torch
 
 # vector database 
 qdrant-client
+=======
+# embeddings
+transformers
+torch
+
+# utils
+numpy
+json5
+
+# RAG helpers
+faiss-cpu
+langchain
+
+# vector database manager
+qdrant-client
+chromadb
+
+# env management
+python-dotenv
+
+# LLM (Groq)
+groq
+python-dotenv
+
