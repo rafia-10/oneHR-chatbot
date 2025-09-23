@@ -2,12 +2,7 @@ import json
 import uuid
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-
-# 🔑 Connect to Qdrant
-qdrant_client = QdrantClient(
-    url="https://6ac6eea9-e469-4661-8a71-5cd940dfb6a7.europe-west3-0.gcp.cloud.qdrant.io:6333", 
-    api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Cm3DQ5g4E-Lo5N652FZ99RGI0ax1ex43lN-8ba7qGik",
-)
+from qdrant_connection import qdrant_client
 
 
 # Load embeddings from JSON
