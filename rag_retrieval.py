@@ -24,7 +24,7 @@ def get_user_company(user_id):
         users = json.load(f)
 
     for user in users:
-        if user.get("_id") == user_id:   # match applicant _id
+        if user.get("id").startswith(user_id):   # match applicant _id
             return user.get("companyId", None)
     return None
 
@@ -64,12 +64,14 @@ def retrieve_chunks(user_query, user_id, top_k=5):
     return chunks
 
 
-# --- Example usage ---
+# # --- Example usage ---
 if __name__ == "__main__":
-    user_id = "P9AeXsZBe3DxNFnJLmCh"  # example applicant ID from rag_chunks.json
-    user_question = "How many leave days does Kevin have?"
+  user_id = "P9AeXsZBe3DxNFnJLmCh"
+  user_question = "How many leave days does Kevin have?"
+  chunks = retrieve_chunks(user_question, user_id, top_k=3)
+  print("🔍 Retrieved Chunks:")
+  for c in chunks:
+    print("-", c[:200], "...")
 
-    chunks = retrieve_chunks(user_question, user_id, top_k=3)
-    print("🔍 Retrieved Chunks:")
-    for c in chunks:
-        print("-", c[:200], "...")
+# company_id = get_user_company(user_id)
+# print(company_id)
