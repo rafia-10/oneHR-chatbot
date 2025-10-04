@@ -27,10 +27,6 @@ fields_to_push_internal = {
     "leaveManagement": [
         "reason",
         "comments",
-        "leaveType",
-        "firstDayOfLeave",
-        "lastDayOfLeave",
-        "dateOfReturn"
     ],
     "jobPost": [
         "jobDescription",
