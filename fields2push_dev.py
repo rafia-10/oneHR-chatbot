@@ -13,7 +13,8 @@ fields_to_push_dev = {
         "managerFeedback",
         "justification",
         "actionItems",
-        "managerMessage"
+        "managerMessage",
+        "SMARTObjective"
     ],
     "overtimeRequest": [
         "overtimeGoal",
@@ -25,14 +26,30 @@ fields_to_push_dev = {
     ],
     "leaveManagement": [
         "reason",
-        "comments"
+        "comments",
+        "leaveType",
+        "firstDayOfLeave",
+        "lastDayOfLeave",
+        "dateOfReturn"
     ],
+
+
     "jobPost": [
+        "jobTitle",
         "jobDescription",
         "responsibilities",
         "requirements",
-        "benefits"
+        "benefits",
+        "employmentType",
+        "workMode",
+        "location",
+        "yearsOfExperience",
+        "jobLevel",
+        "applicationDeadline"
     ],
+
+
+
     "hiringNeed": [
         "reasonForHire",
         "rejectionReason"

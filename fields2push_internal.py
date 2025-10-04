@@ -1,6 +1,7 @@
 fields_to_push_internal = {
     "employee": [
         "role",
+        "promotionInterviewResults",
         "employmentPosition",
         "reportingLineManagerPosition",
         "shiftType"
@@ -25,7 +26,11 @@ fields_to_push_internal = {
     ],
     "leaveManagement": [
         "reason",
-        "comments"
+        "comments",
+        "leaveType",
+        "firstDayOfLeave",
+        "lastDayOfLeave",
+        "dateOfReturn"
     ],
     "jobPost": [
         "jobDescription",
