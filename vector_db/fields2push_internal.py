@@ -1,4 +1,4 @@
-fields_to_push_internal = {
+fields_to_embed_internal = {
     "employee": [
         "role",
         "promotionInterviewResults",
