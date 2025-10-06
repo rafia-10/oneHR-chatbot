@@ -20,11 +20,16 @@ collections_config = [
 
 for col in collections_config:
     # Recreate collection (deletes old collection, so careful!)
-    qdrant_client.recreate_collection(
-        collection_name=col["name"],
-        vectors_config=models.VectorParams(size=384, distance=models.Distance.COSINE)
-    )
-    print(f"✅ Collection '{col['name']}' created/reset.")
+    if not qdrant_client.collection_exists(col["name"]):
+        qdrant_client.create_collection(
+            collection_name=col["name"],
+            vectors_config=models.VectorParams(size=384, distance=models.Distance.COSINE)
+        )
+        print(f"✅ Collection '{col['name']}' created.")
+    else:
+        print(f"ℹ️ Collection '{col['name']}' already exists. New points will be added/updated.")
+
+
 
     # Load embeddings
     with open(col["embeddings_file"], "r") as f:
