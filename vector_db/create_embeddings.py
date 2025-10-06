@@ -22,9 +22,9 @@ def create_embeddings(fields_list):
     """Embed all fields in a list."""
     embeddings_list = []
     for field in fields_list:
-        emb = embed_text(field["value"])
+        emb = embed_text(field)
         embeddings_list.append({
-            "field_name": field["field_name"],
+            "field_name": field,
             "embedding": emb.tolist()
         })
     return embeddings_list
