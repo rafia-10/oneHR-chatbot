@@ -1,7 +1,7 @@
 import numbers
 import json
 from datetime import datetime
-from config import CHUNK_SIZE
+from .config import CHUNK_SIZE
 
 structured_field_keywords = ["id", "uid", "employeeID", "shiftType", "tax", "bankAccount", "email"]
 
@@ -30,12 +30,12 @@ def extract_text(data, depth=0, max_depth=4):
 
     text_chunks = []
     if isinstance(data, dict):
-        for v in data.values():
-            if is_embeddable(v):
+        for k, v in data.items():
+            if is_embeddable(k, v):
                 text_chunks.extend(extract_text(v, depth + 1, max_depth))
     elif isinstance(data, list):
         for item in data:
-            if is_embeddable(item):
+            if is_embeddable("", item):
                 text_chunks.extend(extract_text(item, depth + 1, max_depth))
     elif isinstance(data, str) and data.strip():
         text_chunks.append(data.strip())
