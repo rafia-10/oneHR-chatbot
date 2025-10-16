@@ -1,78 +1,59 @@
-# vector_db/create_embeddings.py
+import os
 import json
-import torch
-from transformers import AutoTokenizer, AutoModel
+from firestore_utils import fetch_documents
+from text_utils import extract_text, chunk_text
+from embedding_model import embed_batch
+from config import BATCH_SIZE, OUTPUT_DIR
 from firebase_connect import db_dev, db_internal
-from fields2push_dev import fields_to_embed_dev
-from fields2push_internal import fields_to_embed_internal
 
-# --- Load embedding model once ---
-model_name = "sentence-transformers/all-MiniLM-L6-v2"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModel.from_pretrained(model_name)
-
-def embed_batch(texts):
-    """Batch-embed a list of texts."""
-    encoded_input = tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
-    with torch.no_grad():
-        model_output = model(**encoded_input)
-    embeddings = model_output.last_hidden_state.mean(dim=1)
-    return embeddings.numpy().tolist()
-
-def fetch_and_embed(db, fields_to_embed, company_name):
-    """Fetch Firestore text fields, embed them, and save results."""
+def fetch_and_embed(db, company_name):
     all_embeddings = []
-    batch_texts, batch_meta = [], []
 
-    for collection_name, fields in fields_to_embed.items():
-        print(f"📦 Fetching from collection: {collection_name}")
-        docs = db.collection(collection_name).stream()
+    for coll_ref in db.collections():
+        coll_name = coll_ref.id
+        print(f"📦 {company_name} - processing collection: {coll_name}")
 
-        for doc in docs:
-            data = doc.to_dict() or {}
-            for field in fields:
-                if field not in data or not data[field]:
-                    continue
+        batch_texts, batch_meta = [], []
+        for doc in fetch_documents(db, coll_name):
+            texts = extract_text(doc)
+            for t in texts:
+                for chunk_index, chunk in enumerate(chunk_text(t)):
+                    batch_texts.append(chunk)
+                    batch_meta.append({
+                        "collection": coll_name,
+                        "doc_id": doc.get('id', None),
+                        "chunk_index": chunk_index,
+                        "text": chunk
+                    })
 
-                # Convert any non-string (list/dict/num) to string
-                value = data[field]
-                if not isinstance(value, str):
-                    value = json.dumps(value, ensure_ascii=False)
+                    if len(batch_texts) >= BATCH_SIZE:
+                        vectors = embed_batch(batch_texts)
+                        for meta, vector in zip(batch_meta, vectors):
+                            meta["embedding"] = vector
+                            all_embeddings.append(meta)
+                        batch_texts, batch_meta = [], []
 
-                batch_texts.append(value)
-                batch_meta.append({
-                    "collection": collection_name,
-                    "field_name": field,
-                    "text": value
-                })
+        # leftover batch
+        if batch_texts:
+            vectors = embed_batch(batch_texts)
+            for meta, vector in zip(batch_meta, vectors):
+                meta["embedding"] = vector
+                all_embeddings.append(meta)
 
-                # Process in batches for efficiency
-                if len(batch_texts) >= 32:
-                    vectors = embed_batch(batch_texts)
-                    for meta, vector in zip(batch_meta, vectors):
-                        meta["embedding"] = vector
-                        all_embeddings.append(meta)
-                    batch_texts, batch_meta = [], []
+        print(f"✅ {company_name} - embedded {len(all_embeddings)} items from {coll_name}")
 
-    # Handle any leftover batch
-    if batch_texts:
-        vectors = embed_batch(batch_texts)
-        for meta, vector in zip(batch_meta, vectors):
-            meta["embedding"] = vector
-            all_embeddings.append(meta)
-
-    print(f"✅ {company_name}: Embedded {len(all_embeddings)} items total.")
     return all_embeddings
 
-# --- Run for both Firestore DBs ---
-dev_embeddings = fetch_and_embed(db_dev, fields_to_embed_dev, "Dev")
-internal_embeddings = fetch_and_embed(db_internal, fields_to_embed_internal, "Internal")
+def save_embeddings(embeddings, path):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(embeddings, f, ensure_ascii=False, indent=2)
 
-# --- Save JSON outputs ---
-with open("vector_db/dev_fields_embeddings.json", "w", encoding="utf-8") as f:
-    json.dump(dev_embeddings, f, ensure_ascii=False, indent=2)
 
-with open("vector_db/internal_fields_embeddings.json", "w", encoding="utf-8") as f:
-    json.dump(internal_embeddings, f, ensure_ascii=False, indent=2)
+DB_MAPPING = {"Dev": db_dev, "Internal": db_internal}
 
-print("🔥 All embeddings created and saved successfully!")
+for company_name, db in DB_MAPPING.items():
+    embeddings = fetch_and_embed(db, company_name)
+    path = os.path.join(OUTPUT_DIR, f"{company_name.lower()}_fields_embeddings.json")
+    save_embeddings(embeddings, path)
+    print(f"🔥 {company_name} embeddings saved to {path}")
