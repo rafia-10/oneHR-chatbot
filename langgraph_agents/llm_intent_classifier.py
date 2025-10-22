@@ -5,13 +5,6 @@ class LLMIntentClassifier:
     """
     Classifies a user query as 'structured' or 'unstructured'
     using an OpenRouter LLM (e.g., GPT-4o-mini, Claude, Mistral, etc.)
-
-    Example return:
-    {
-        "intent": "structured",
-        "confidence": 0.93,
-        "reason": "User asked for numeric data (average salary)"
-    }
     """
 
     def __init__(self, openrouter_api_key: str, model: str = "gpt-4o-mini", max_retries: int = 2):
