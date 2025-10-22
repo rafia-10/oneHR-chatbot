@@ -7,10 +7,19 @@ tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModel.from_pretrained(MODEL_NAME)
 model.eval()
 
-def embed_batch(texts):
-    """Batch-embed a list of texts."""
-    encoded_input = tokenizer(texts, padding=True, truncation=True, return_tensors='pt')
+def embed_batch(texts: list):
+    """
+    Embed a list of texts into vectors using Hugging Face model.
+    Can also embed a single text by passing [text].
+    Returns a list of numpy arrays.
+    """
+    if not texts:
+        return []
+
+    encoded = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
     with torch.no_grad():
-        model_output = model(**encoded_input)
-    embeddings = model_output.last_hidden_state.mean(dim=1)
-    return embeddings.numpy().tolist()
+        out = model(**encoded)
+
+    # mean pooling
+    embeddings = out.last_hidden_state.mean(dim=1).numpy()
+    return embeddings.tolist()
