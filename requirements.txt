@@ -1,31 +1,17 @@
-# database connection
+# Database connection
 firebase-admin
 
-HEAD
-# embedding
+# Embedding & ML
 transformers
 torch
-
-# vector database 
-qdrant-client
-
-
-# utils
 numpy
-json5
 
-# RAG helpers
-faiss-cpu
-langchain
-
-# vector database manager
+# Vector database
 qdrant-client
-chromadb
 
-# env management
+# Utilities
 python-dotenv
 
-# LLM (Groq)
-groq
-python-dotenv
-
+# RAG / Agents
+langgraph
+llama-index.llms.openrouter  # for OpenRouter LLM integration
