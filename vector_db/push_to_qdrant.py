@@ -1,8 +1,7 @@
 # vector_db/push_to_qdrant.py
 import json
-from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from qdrant_connection import qdrant_client  # your initialized client
+from qdrant_connection import qdrant_client  # initialized client
 
 # Config: collection names & embedding files
 collections_config = [
@@ -18,7 +17,7 @@ collections_config = [
     }
 ]
 
-VECTOR_SIZE = 384  # must match your embedding model
+VECTOR_SIZE = 384  # must match  embedding model
 
 for col in collections_config:
     # Ensure collection exists
