@@ -1,32 +1,19 @@
-import requests, json
-from vector_db.qdrant_connection import qdrant_client
-from vector_db.embedding_model import embed_batch
-
+import requests
+from semantic_search.qdrant_search import search_qdrant
 class UnstructuredAgent:
-    def __init__(self, openrouter_api_key: str, model="gpt-4o-mini", collection_name:str = None):
+    def __init__(self, openrouter_api_key: str, model="gpt-4o-mini", collection_name: str = None):
         self.api_key = openrouter_api_key
         self.model = model
         self.collection = collection_name
 
-    def search_qdrant(self, query: str, top_k: int = 3):
-        query_vec = embed_batch([query])[0]
-        results = qdrant_client.search(
-            collection_name=self.collection,
-            query_vector=query_vec,
-            limit=top_k
-        )
-        return [r.payload.get("content", "") for r in results]
-
     def summarize_results(self, query: str, contexts: list[str]):
         if not contexts:
             return "No relevant information found."
-
         prompt = (
             f"User question: {query}\n\n"
             f"Relevant info:\n{chr(10).join(contexts)}\n\n"
             "Summarize the relevant parts and answer clearly."
         )
-
         body = {
             "model": self.model,
             "messages": [
@@ -36,7 +23,6 @@ class UnstructuredAgent:
             "temperature": 0.3,
             "max_tokens": 250,
         }
-
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
         res = requests.post("https://openrouter.ai/api/v1/chat/completions", json=body, headers=headers)
         try:
@@ -45,5 +31,5 @@ class UnstructuredAgent:
             return "Failed to summarize results."
 
     def handle(self, query: str):
-        docs = self.search_qdrant(query)
+        docs = search_qdrant(query, self.collection)
         return self.summarize_results(query, docs)
