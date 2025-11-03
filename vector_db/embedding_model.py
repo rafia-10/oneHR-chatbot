@@ -1,6 +1,6 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
-from config import MODEL_NAME
+from .config import MODEL_NAME
 
 # Load model once
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
