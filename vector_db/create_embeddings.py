@@ -1,10 +1,10 @@
 import os
 import json
-from firestore_utils import fetch_documents
-from text_utils import extract_text, chunk_text
-from embedding_model import embed_batch
-from config import BATCH_SIZE, OUTPUT_DIR
-from firestore_db.firebase_connect import db_dev, db_internal
+from .firestore_utils import fetch_documents
+from .text_utils import extract_text, chunk_text
+from .embedding_model import embed_batch
+from .config import BATCH_SIZE, OUTPUT_DIR
+from ..firestore_db.firebase_connect import db_dev, db_internal
 
 def fetch_and_embed(db, company_name):
     all_embeddings = []
