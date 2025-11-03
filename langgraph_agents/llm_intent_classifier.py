@@ -1,5 +1,5 @@
 import requests, json, time
-from intent_classifier_utils import build_prompt
+from .intent_classifier_utils import build_prompt
 
 class LLMIntentClassifier:
     """

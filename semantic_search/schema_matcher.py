@@ -1,5 +1,5 @@
-from ..vector_db.embedding_model import embed_batch
-from ..firestore_db.firestore_schema import fetch_all_firestore_schemas
+from vector_db.embedding_model import embed_batch
+from firestore_db.firestore_schema import fetch_all_firestore_schemas
 import numpy as np
 
 class SchemaMatcher:
