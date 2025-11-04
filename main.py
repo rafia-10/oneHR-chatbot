@@ -1,4 +1,5 @@
 import os
+from firestore_db.firebase_connect import db_clients
 from langgraph_agents.llm_intent_classifier import LLMIntentClassifier
 from langgraph_agents.rag_pipeline import  RouterAgent
 from langgraph_agents.structured_agent import StructuredAgent
@@ -13,7 +14,7 @@ structured_agent = StructuredAgent(openrouter_api_key=OPENROUTER_KEY)
 unstructured_agent = UnstructuredAgent(openrouter_api_key=OPENROUTER_KEY, collection_name="dev_fields")
 
 # 2️⃣ Schema matcher for structured queries
-schema_matcher = SchemaMatcher()
+schema_matcher = SchemaMatcher(db_clients=db_clients)
 
 # 3️⃣ RAG pipeline
 pipeline = RouterAgent(

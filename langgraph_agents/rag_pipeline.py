@@ -4,10 +4,11 @@ from .structured_agent import StructuredAgent
 from .unstructured_agent import UnstructuredAgent
 
 class RouterAgent:
-    def __init__(self, openrouter_api_key: str):
-        self.classifier = LLMIntentClassifier(openrouter_api_key)
-        self.structured_agent = StructuredAgent(openrouter_api_key)
-        self.unstructured_agent = UnstructuredAgent(openrouter_api_key)
+    def __init__(self, intent_classifier, structured_agent, unstructured_agent, schema_matcher):
+        self.classifier = intent_classifier
+        self.structured_agent = structured_agent
+        self.unstructured_agent = unstructured_agent
+        self.schema_matcher = schema_matcher
 
     def route(self, query: str):
         intent_info = self.classifier.classify(query)
